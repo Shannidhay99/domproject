@@ -1,2 +1,150 @@
-# domproject
- https://github.com/Shannidhay99/domproject/tree/main/interactive-qiz-app
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Interactive Quiz App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f4f8;
+      padding: 20px;
+    }
+    #quiz-container {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    h2 {
+      margin-bottom: 15px;
+    }
+    .answers {
+      margin-bottom: 20px;
+    }
+    .answers button {
+      display: block;
+      margin: 8px 0;
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: #e0e7ff;
+      cursor: pointer;
+    }
+    .answers button.selected {
+      background: #6366f1;
+      color: white;
+      font-weight: bold;
+    }
+    #next-btn {
+      padding: 10px 20px;
+      background: #10b981;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #score-container {
+      font-size: 1.2em;
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="quiz-container">
+  <h2 id="question">Question text here</h2>
+  <div class="answers" id="answers"></div>
+  <button id="next-btn">Next</button>
+  <div id="score-container"></div>
+</div>
+
+<script>
+  const quizData = [
+    {
+      question: "What is the capital of France?",
+      options: ["Berlin", "Madrid", "Paris", "Rome"],
+      correct: "Paris"
+    },
+    {
+      question: "Which language runs in a web browser?",
+      options: ["Java", "C", "Python", "JavaScript"],
+      correct: "JavaScript"
+    },
+    {
+      question: "What does CSS stand for?",
+      options: ["Central Style Sheets", "Cascading Style Sheets", "Cascading Simple Sheets", "Cars SUVs Sailboats"],
+      correct: "Cascading Style Sheets"
+    },
+    {
+      question: "What year was JavaScript launched?",
+      options: ["1996", "1995", "1994", "None of the above"],
+      correct: "1995"
+    }
+  ];
+
+  const questionEl = document.getElementById("question");
+  const answersEl = document.getElementById("answers");
+  const nextBtn = document.getElementById("next-btn");
+  const scoreContainer = document.getElementById("score-container");
+
+  let currentQuestionIndex = 0;
+  let score = 0;
+  let selectedAnswer = "";
+
+  function showQuestion() {
+    const current = quizData[currentQuestionIndex];
+    questionEl.textContent = current.question;
+    answersEl.innerHTML = "";
+
+    current.options.forEach(option => {
+      const btn = document.createElement("button");
+      btn.textContent = option;
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".answers button").forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        selectedAnswer = option;
+      });
+      answersEl.appendChild(btn);
+    });
+  }
+
+  nextBtn.addEventListener("click", () => {
+    if (!selectedAnswer) {
+      alert("Please select an answer!");
+      return;
+    }
+
+    if (selectedAnswer === quizData[currentQuestionIndex].correct) {
+      score++;
+    }
+
+    selectedAnswer = "";
+    currentQuestionIndex++;
+
+    if (currentQuestionIndex < quizData.length) {
+      showQuestion();
+    } else {
+      showScore();
+    }
+  });
+
+  function showScore() {
+    questionEl.textContent = "Quiz Finished!";
+    answersEl.innerHTML = "";
+    nextBtn.style.display = "none";
+    scoreContainer.textContent = `You scored ${score} out of ${quizData.length}`;
+    localStorage.setItem("lastQuizScore", score);
+  }
+
+  // Start the quiz
+  showQuestion();
+</script>
+
+</body>
+</html>
